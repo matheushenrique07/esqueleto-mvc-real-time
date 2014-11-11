@@ -1,0 +1,39 @@
+<% include layout %>
+<body>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+	<script type="text/javascript">
+		var socket = io.connect('http://localhost:3000');
+		socket.on('tasks', function (data){
+			document.getElementById('teste').innerHTML += '<li>'+data.nome+'</li>';
+		});
+
+		var enviar = function(usuario) {
+			var title = $('.title').val();
+			socket.emit('send-server', {nome:title, usuario:usuario, tipo:'tasks'});
+		};
+
+	</script>
+
+	<h2>Create Users</h2>
+	<form action="/users/create" method="post">
+		<input type="text" name="username">
+		<button type="submit">salvar</button>
+	</form>
+	<%  users.forEach(function(user,index){ %>
+		<p><%- user.username%></p>
+
+		<form action="/users/<%- user.id %>/tasks/create" method="post">
+			<input type="text" name="title" class="title">
+			<button type="button" onclick="enviar(<%- user.id%>);">salvar tarefa</button>			
+		</form>
+
+		<ul id="teste">
+			<% user.Tasks.forEach(function(task,index){ %>
+			<li><%- task.title %></li>
+			<% }) %>
+		</ul>
+	<% })  %>
+</body>
+</html>
