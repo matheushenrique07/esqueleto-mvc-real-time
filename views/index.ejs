@@ -4,14 +4,14 @@
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.js"></script>
 
 	<script type="text/javascript">
-		var socket = io.connect('http://localhost:3000');
+		var socket = io.connect('http://localhost:8080');
 		socket.on('tasks', function (data){
-			document.getElementById('teste').innerHTML += '<li>'+data.nome+'</li>';
+			document.getElementById('teste-'+data.UserId).innerHTML += '<li>'+data.title+'</li>';
 		});
 
 		var enviar = function(usuario) {
-			var title = $('.title').val();
-			socket.emit('send-server', {nome:title, usuario:usuario, tipo:'tasks'});
+			var title = $('#'+usuario+' .title').val();
+			socket.emit('send-server', {nome:title, usuario:usuario});
 		};
 
 	</script>
@@ -24,12 +24,12 @@
 	<%  users.forEach(function(user,index){ %>
 		<p><%- user.username%></p>
 
-		<form action="/users/<%- user.id %>/tasks/create" method="post">
+		<form action="/users/<%- user.id %>/tasks/create" method="post" id="<%- user.id %>">
 			<input type="text" name="title" class="title">
 			<button type="button" onclick="enviar(<%- user.id%>);">salvar tarefa</button>			
 		</form>
 
-		<ul id="teste">
+		<ul id="teste-<%- user.id %>">
 			<% user.Tasks.forEach(function(task,index){ %>
 			<li><%- task.title %></li>
 			<% }) %>
